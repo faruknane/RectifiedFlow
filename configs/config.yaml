@@ -1,0 +1,150 @@
+
+
+device:
+  params:
+    device: cuda
+  ref: device
+  target: torch.device
+
+
+first_stage_model:
+  params:
+    # ckpt_path: first_stage_models/epoch=000092.ckpt # TODO FILL HERE or use modules.base_models.autoencoder.BlankAutoencoder
+    decoder:
+      params:
+        from_ref: enc_dec_config
+      target: modules.base_models.units.Decoder
+    embed_dim: 10
+    enc_dec_config:
+      params:
+        attn_resolutions: []
+        ch: 64
+        ch_mult:
+        - 1
+        - 2
+        - 4
+        double_z: true
+        dropout: 0.0
+        in_channels: 5
+        num_res_blocks: 2
+        out_ch: 5
+        resolution: 256
+        z_channels: 10
+      ref: enc_dec_config
+      target: dict
+    encoder:
+      params:
+        from_ref: enc_dec_config
+      target: modules.base_models.units.Encoder
+  ref: first_stage_model
+  target: modules.base_models.autoencoder.BlankAutoencoder
+
+condition_stage_model:
+  ref: condition_stage_model
+  target: modules.base_models.autoencoder.BlankAutoencoder
+
+model:
+  params:
+    # ckpt_path: "logs/diffusion/version_9/checkpoints/epoch=3-step=10263.ckpt"
+    
+    base_lr: 0.0001
+
+    image_key: "image"
+    condition_key: "condition"
+
+    discrete_max_timesteps: 100
+    
+    first_stage_model:
+      from_ref: first_stage_model
+      
+    condition_stage_model:
+      from_ref: condition_stage_model
+    
+    flow:
+      target: modules.diffusion.flows.RectifiedFlowTrajectory
+
+    loss:
+      target: torch.nn.MSELoss
+
+    t_sampler:
+      params:
+        m: 0
+        min_prob: 0.0
+        s: 1
+      target: modules.diffusion.samplers.LogNormalSampler
+
+    model:
+      params:
+        attention_resolutions:
+        - 16
+        - 8
+        channel_mult:
+        - 1
+        - 2
+        - 2
+        - 4
+        image_size: 64
+        in_channels: 10
+        model_channels: 160
+        num_heads: 32
+        num_res_blocks: 2
+        out_channels: 5
+        resblock_updown: true
+        use_scale_shift_norm: true
+      target: modules.diffusion.openaimodel.UNetModel
+    
+  target: models.DiffusionModel
+
+
+
+
+
+
+
+
+
+train_dataloader:
+  params:
+    batch_size: 4
+    dataset:
+      from_ref: trainset
+    num_workers: 4
+    persistent_workers: true
+    shuffle: true
+  target: torch.utils.data.DataLoader
+  
+val_dataloader:
+  params:
+    batch_size: 2
+    dataset:
+      from_ref: valset
+    num_workers: 1
+    persistent_workers: true
+    shuffle: false
+  target: torch.utils.data.DataLoader
+
+test_dataloader:
+  params:
+    batch_size: 2
+    dataset:
+      from_ref: testset
+    num_workers: 1
+    persistent_workers: true
+    shuffle: false
+  target: torch.utils.data.DataLoader
+
+trainset:
+  params:
+    # TODO FILL HERE 
+  ref: trainset
+  target: # TODO FILL HERE 
+
+valset:
+  params:
+    # TODO FILL HERE 
+  ref: valset
+  target: # TODO FILL HERE 
+
+testset:
+  ref: testset
+  from_ref: valset
