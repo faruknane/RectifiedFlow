@@ -1,5 +1,5 @@
 # RectifiedFlow
-The smallest RectifiedFlow Implementation based on SD3 paper.
+The smallest and the easiest RectifiedFlow Implementation based on SD3 paper.
 
 ## Requirements
 - Python 3.12
