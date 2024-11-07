@@ -7,7 +7,7 @@ The smallest RectifiedFlow Implementation based on SD3 paper.
 
 ## Features
 - Uses the same UNet model from stable diffusion.
-- Uses linear flow (xt = (1-t) * x0 + t * x1 where x0 is our data distribution and x1 is random noise.
+- Uses linear flow **xt = (1-t) * x0 + t * x1** where x0 is our data distribution and x1 is random noise.
 - UniformSampler and LogNormalSampler for time steps.
 
 This repo has been inspired by SD3 paper! This repo doesn't relate to any code base, written from scratch all manually. 
