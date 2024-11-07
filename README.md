@@ -12,7 +12,7 @@ The smallest and the easiest RectifiedFlow Implementation based on SD3 paper.
 - LogNormalSampler, log normal distribution implemented for time steps.
 - Supports Ema weights.
 
-# Run
+## Run
 - Before running it, please fill in config and dataset.py file.
 - Just use main.py!
 
